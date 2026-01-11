@@ -1,0 +1,19 @@
+services:
+  auth-db:
+    image: postgres:15
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: authdb
+    ports:
+      - "5432:5432"
+    command: >
+      postgres
+      -c password_encryption=scram-sha-256
+      -c listen_addresses='*'
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+
+volumes:
+  auth_db_data:
