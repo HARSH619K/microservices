@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import {
   findUserByEmail,
   createUser,
@@ -11,13 +11,7 @@ export const registerUser = async ({ email, password }) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = await createUser({
-    email,
-    password: hashedPassword,
-  });
-
-  return user;
+  return createUser({ email, password: hashedPassword });
 };
 
 export const loginUser = async ({ email, password }) => {
@@ -26,9 +20,10 @@ export const loginUser = async ({ email, password }) => {
     throw new Error("INVALID_CREDENTIALS");
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
+  const isValid = await bcrypt.compare(password, user.password);
+  if (!isValid) {
     throw new Error("INVALID_CREDENTIALS");
   }
+
   return user;
 };

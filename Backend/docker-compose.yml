@@ -1,15 +1,20 @@
 services:
   auth-db:
-    image: postgres:15
-    container_name: auth-postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: authdb
-    ports:
-      - "5432:5432"
+    image: postgres:16-alpine
+    env_file:
+      - ./services/auth-service/db.env
     volumes:
       - auth_db_data:/var/lib/postgresql/data
+      - ./services/auth-service/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  auth-api:
+    build: ./services/auth-service
+    env_file:
+      - ./services/auth-service/.env
+    depends_on:
+      - auth-db
+    ports:
+      - "4001:4001"
 
 volumes:
   auth_db_data:

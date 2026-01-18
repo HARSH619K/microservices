@@ -1,18 +1,15 @@
 import jwt from "jsonwebtoken";
 import { registerUser, loginUser } from "../services/auth.service.js";
+import { JWT_SECRET } from "../config/jwt.js";
 
 /**
  * POST /auth/register
  */
 export const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    console.log("REGISTER BODY:", req.body);
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
-    }
+    const { email, password } = req.body;
 
     await registerUser({ email, password });
 
@@ -20,16 +17,8 @@ export const register = async (req, res) => {
       message: "User registered successfully",
     });
   } catch (error) {
-    if (error.message === "USER_EXISTS") {
-      return res.status(409).json({
-        message: "User already exists",
-      });
-    }
-
-    console.error("Register error:", error);
-    return res.status(500).json({
-      message: "Internal server error",
-    });
+    console.error("REGISTER ERROR:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
