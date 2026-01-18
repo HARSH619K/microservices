@@ -7,7 +7,7 @@ services:
       - auth_db_data:/var/lib/postgresql/data
       - ./services/auth-service/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  auth-api:
+  auth-service:
     build: ./services/auth-service
     env_file:
       - ./services/auth-service/.env
@@ -15,6 +15,14 @@ services:
       - auth-db
     ports:
       - "4001:4001"
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    depends_on:
+      - auth-service
+    ports:
+      - "3000:3000"
 
 volumes:
   auth_db_data:
